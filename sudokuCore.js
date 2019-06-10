@@ -58,11 +58,11 @@ function fillBoard() {
     var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     if (i > 0) {
-      usableNums = checkIfRowRepeats.call(this,selectedCell, usableNums);
+      usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
-      usableNums = checkIfColumnRepeats.call(this,selectedCell, usableNums);
+      usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
 
-      usableNums = checkIf3x3RegionRepeats.call(this,selectedCell, usableNums);
+      usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
     }
   }
 }
@@ -77,7 +77,7 @@ function selectCellRandomly() {
 function checkIfRowRepeats(selectedCell, usableNumList) {
   let rowArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    rowArray.push(this.board[selectedCell.row, i]);
+    rowArray.push(this.board[(selectedCell.row, i)]);
   }
 
   return checkForRepeatsOnSection(rowArray, usableNums);
@@ -86,23 +86,31 @@ function checkIfRowRepeats(selectedCell, usableNumList) {
 function checkIfColumnRepeats(selectedCell, usableNumList) {
   let columnArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    columnArray.push(this.board[i, selectedCell.column]);
+    columnArray.push(this.board[(i, selectedCell.column)]);
   }
   return checkForRepeatsOnSection(columnArray, usableNums);
 }
 
 function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
   let regionArray = new Array(SUDOKUBOARDWIDTH);
- // 1. locate 3x3 region of the board
- // 2. Get cells in region
- // 3. add each cell to a list to chec for repeats\
+  // 1. locate 3x3 region of the board
+  // 2. Get cells in region
+  // 3. add each cell to a list to chec for repeats\
+  var region = {
+    row: selectedCell.row % SUDOKUINNERGRIDWIDTH,
+    column: selectedCell.column % SUDOKUINNERGRIDWIDTH
+  };
 
-  
+  for (let i = region.row; i < region.row + SUDOKUINNERGRIDWIDTH; i++) {
+      for (let j = region.column; j < region.column + SUDOKUINNERGRIDWIDTH; j++) {
+        regionArray.push(this.board[i,j]);
+      }
+      
+  }
+
   return checkForRepeatsOnSection(regionArray, usableNums);
 }
 
 function checkForRepeatsOnSection(sectionList, usableNums) {
-
+  
 }
-
-
