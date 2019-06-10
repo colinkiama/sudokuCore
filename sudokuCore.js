@@ -17,7 +17,7 @@ export default class SudokuBoard {
 
   createNewGame() {
     // Step 1: Fill up grid with numbers considering sudoku constraints
-    fillBoard(this.board);
+    fillBoard.call(this);
     // Step 2: Remove cells considering difficulty level.
   }
 }
@@ -47,22 +47,22 @@ function createUnusedCellsList() {
   return unusedCellCoordinates;
 }
 
-function fillBoard(boardObj) {
+function fillBoard() {
   // Sudoku rules considered
   // 1. A row must not have repeated digits.
   // 2. A column must not have repeated digits
   // 3. Inner 3x3 regions must not have repeated digits
 
-  for (let i = 0; i < boardObj.board.length; i++) {
+  for (let i = 0; i < this.board.length; i++) {
     selectedCell = selectCellRandomly();
     var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     if (i > 0) {
-      usableNums = checkIfRowRepeats.call(boardObj,selectedCell, usableNums);
+      usableNums = checkIfRowRepeats.call(this,selectedCell, usableNums);
 
-      usableNums = checkIfColumnRepeats.call(boardObj,selectedCell, usableNums);
+      usableNums = checkIfColumnRepeats.call(this,selectedCell, usableNums);
 
-      usableNums = checkIf3x3RegionRepeats.call(boardObj,selectedCell, usableNums);
+      usableNums = checkIf3x3RegionRepeats.call(this,selectedCell, usableNums);
     }
   }
 }
@@ -77,7 +77,7 @@ function selectCellRandomly() {
 function checkIfRowRepeats(selectedCell, usableNumList) {
   let rowArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    rowArray.push(this[selectedCell.row, i]);
+    rowArray.push(this.board[selectedCell.row, i]);
   }
 
   return checkForRepeatsOnSection(rowArray, usableNums);
@@ -86,7 +86,7 @@ function checkIfRowRepeats(selectedCell, usableNumList) {
 function checkIfColumnRepeats(selectedCell, usableNumList) {
   let columnArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    columnArray.push(this[i, selectedCell.column]);
+    columnArray.push(this.board[i, selectedCell.column]);
   }
   return checkForRepeatsOnSection(columnArray, usableNums);
 }
@@ -96,6 +96,8 @@ function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
  // 1. locate 3x3 region of the board
  // 2. Get cells in region
  // 3. add each cell to a list to chec for repeats\
+
+  
   return checkForRepeatsOnSection(regionArray, usableNums);
 }
 
