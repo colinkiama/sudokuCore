@@ -54,8 +54,8 @@ function fillBoard() {
   // 3. Inner 3x3 regions must not have repeated digits
 
   for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
-    selectedCell = selectCellRandomly();
-    var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let selectedCell = selectCellRandomly();
+    let usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     if (i > 0) {
       // usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
@@ -71,7 +71,7 @@ function fillBoard() {
       checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
     }
 
-    numToUse = usableNums[usableNums[getRandomInt(usableNums.length)]];
+    var numToUse = usableNums[getRandomInt(usableNums.length)];
     this.board[selectedCell.row][selectedCell.column] = numToUse;
   }
   console.log(this.board);
@@ -83,31 +83,37 @@ function getRandomInt(upperBound) {
 
 function selectCellRandomly() {
   var cellIndex = Math.floor(Math.random() * Math.floor(unusedCells.length));
-  selectedCell = unusedCells[cellIndex];
+  var selectedCell = unusedCells[cellIndex];
   unusedCells.splice(cellIndex, 1);
   return selectedCell;
 }
 
 function checkIfRowRepeats(selectedCell, usableNumList) {
-  let rowArray = new Array(SUDOKUBOARDWIDTH);
+  let rowArray = [];
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    rowArray.push(this.board[selectedCell.row][i]);
+    var itemToPush = this.board[selectedCell.row][i];
+    if (itemToPush != null) {
+      rowArray.push(itemToPush);
+    }
   }
-
-  return checkForRepeatsOnSection(rowArray, usableNumList);
+  checkForRepeatsOnSection(rowArray, usableNumList);
+  // return checkForRepeatsOnSection(rowArray, usableNumList);
 }
 
 function checkIfColumnRepeats(selectedCell, usableNumList) {
-  let columnArray = new Array(SUDOKUBOARDWIDTH);
+  let columnArray = [];
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    columnArray.push(this.board[i][selectedCell.column]);
+    var itemToPush = this.board[i][selectedCell.column];
+    if (itemToPush != null) {
+      columnArray.push(itemToPush);
+    }
   }
   checkForRepeatsOnSection(columnArray, usableNumList);
-  // return checkForRepeatsOnSection(columnArray, usableNums);
+  // return checkForRepeatsOnSection(columnArray, usableNumList);
 }
 
 function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
-  let regionArray = new Array(SUDOKUBOARDWIDTH);
+  let regionArray = [];
   // 1. locate 3x3 region of the board
   // 2. Get cells in region
   // 3. add each cell to a list to chec for repeats\
@@ -118,12 +124,15 @@ function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
 
   for (let i = region.row; i < region.row + SUDOKUINNERGRIDWIDTH; i++) {
     for (let j = region.column; j < region.column + SUDOKUINNERGRIDWIDTH; j++) {
-      regionArray.push(this.board[i][j]);
+      var itemToPush = this.board[i][j];
+      if (itemToPush != null) {
+        regionArray.push(itemToPush);
+      }
     }
   }
 
   checkForRepeatsOnSection(regionArray, usableNumList);
-  // return checkForRepeatsOnSection(regionArray, usableNums);
+  // return checkForRepeatsOnSection(regionArray, usableNumList);
 }
 
 function checkForRepeatsOnSection(sectionList, usableNums) {
