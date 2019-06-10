@@ -36,7 +36,6 @@ function create2DArray() {
 }
 
 function createUnusedCellsList() {
-  var currentIndex = 0;
   var unusedCellCoordinates = [];
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
@@ -54,10 +53,10 @@ function fillBoard() {
   // 3. Inner 3x3 regions must not have repeated digits
 
   for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
-    let selectedCell = selectCellRandomly();
-    let usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var selectedCell = selectCellRandomly();
+    var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-    if (i > 0) {
+    
       // usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
       // usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
@@ -65,11 +64,14 @@ function fillBoard() {
       // usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
 
       checkIfRowRepeats.call(this, selectedCell, usableNums);
+      console.log("row: " + usableNums);
 
       checkIfColumnRepeats.call(this, selectedCell, usableNums);
-
+      console.log("column: "  + usableNums);
+      
       checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
-    }
+      console.log("3x3 Region: "+ usableNums);
+    
 
     var numToUse = usableNums[getRandomInt(usableNums.length)];
     this.board[selectedCell.row][selectedCell.column] = numToUse;
@@ -89,7 +91,7 @@ function selectCellRandomly() {
 }
 
 function checkIfRowRepeats(selectedCell, usableNumList) {
-  let rowArray = [];
+  var rowArray = [];
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     var itemToPush = this.board[selectedCell.row][i];
     if (itemToPush != null) {
@@ -101,7 +103,7 @@ function checkIfRowRepeats(selectedCell, usableNumList) {
 }
 
 function checkIfColumnRepeats(selectedCell, usableNumList) {
-  let columnArray = [];
+  var columnArray = [];
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     var itemToPush = this.board[i][selectedCell.column];
     if (itemToPush != null) {
@@ -113,17 +115,23 @@ function checkIfColumnRepeats(selectedCell, usableNumList) {
 }
 
 function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
-  let regionArray = [];
-  // 1. locate 3x3 region of the board
-  // 2. Get cells in region
-  // 3. add each cell to a list to chec for repeats\
-  var region = {
-    row: selectedCell.row % SUDOKUINNERGRIDWIDTH,
-    column: selectedCell.column % SUDOKUINNERGRIDWIDTH
-  };
+  var regionArray = [];
 
-  for (let i = region.row; i < region.row + SUDOKUINNERGRIDWIDTH; i++) {
-    for (let j = region.column; j < region.column + SUDOKUINNERGRIDWIDTH; j++) {
+  // 1. get 3x3 board region coords
+  // 2. get local (0,0) of 3x3 board region
+  // 3. get cells in region
+  // 4. add each cell to a list to check for repeats 
+
+  var regionRow = selectedCell.row % SUDOKUINNERGRIDWIDTH;
+  var regionColumn = selectedCell.column % SUDOKUINNERGRIDWIDTH;
+
+   // You multiply by 3 so you get the local (0,0) of each grid: (3,0), (6,3) etc.
+  var localOriginRow = regionRow * SUDOKUINNERGRIDWIDTH;
+  var localOriginColumn = regionColumn * SUDOKUINNERGRIDWIDTH;
+
+ 
+  for (let i = localOriginRow; i < localOriginRow + SUDOKUINNERGRIDWIDTH; i++) {
+    for (let j = localOriginColumn; j < localOriginColumn + SUDOKUINNERGRIDWIDTH; j++) {
       var itemToPush = this.board[i][j];
       if (itemToPush != null) {
         regionArray.push(itemToPush);
@@ -137,10 +145,11 @@ function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
 
 function checkForRepeatsOnSection(sectionList, usableNums) {
   // Reverse for-loop makes it easier to remove items from an array
-  for (let i = usableNums.length - 1; i > -1; i--) {
+  var startIndex = usableNums.length - 1
+  for (let i = startIndex; i > -1; i--) {
     var num = usableNums[i];
     if (sectionList.includes(num)) {
-      usableNums.pop(num);
+      usableNums.splice(i,1);
     }
   }
   // return usableNums;
