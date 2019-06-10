@@ -9,7 +9,7 @@ var unusedCells = [];
 var usedCells = [];
 
 // Classes
-export default class SudokuBoard {
+class SudokuBoard {
   constructor() {
     this.board = create2DArray();
     unusedCells = createUnusedCellsList();
@@ -38,8 +38,8 @@ function create2DArray() {
 function createUnusedCellsList() {
   var currentIndex = 0;
   var unusedCellCoordinates = [];
-  for (let i = 0; i < SUDOKUINNERGRIDWIDTH; i++) {
-    for (let j = 0; j < SUDOKUINNERGRIDWIDTH; j++) {
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
+    for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
       unusedCellCoordinates.push({ row: i, column: j });
     }
   }
@@ -53,22 +53,36 @@ function fillBoard() {
   // 2. A column must not have repeated digits
   // 3. Inner 3x3 regions must not have repeated digits
 
-  for (let i = 0; i < this.board.length; i++) {
+  for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
     selectedCell = selectCellRandomly();
     var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     if (i > 0) {
-      usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+      // usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
-      usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+      // usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
 
-      usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+      // usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+
+      checkIfRowRepeats.call(this, selectedCell, usableNums);
+
+      checkIfColumnRepeats.call(this, selectedCell, usableNums);
+
+      checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
     }
+
+    numToUse = usableNums[usableNums[getRandomInt(usableNums.length)]];
+    this.board[selectedCell.row][selectedCell.column] = numToUse;
   }
+  console.log(this.board);
+}
+
+function getRandomInt(upperBound) {
+  return Math.floor(Math.random() * Math.floor(upperBound));
 }
 
 function selectCellRandomly() {
-  var cellIndex = Math.random() * Math.floor(unusedCells.length);
+  var cellIndex = Math.floor(Math.random() * Math.floor(unusedCells.length));
   selectedCell = unusedCells[cellIndex];
   unusedCells.splice(cellIndex, 1);
   return selectedCell;
@@ -77,18 +91,19 @@ function selectCellRandomly() {
 function checkIfRowRepeats(selectedCell, usableNumList) {
   let rowArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    rowArray.push(this.board[(selectedCell.row, i)]);
+    rowArray.push(this.board[selectedCell.row][i]);
   }
 
-  return checkForRepeatsOnSection(rowArray, usableNums);
+  return checkForRepeatsOnSection(rowArray, usableNumList);
 }
 
 function checkIfColumnRepeats(selectedCell, usableNumList) {
   let columnArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    columnArray.push(this.board[(i, selectedCell.column)]);
+    columnArray.push(this.board[i][selectedCell.column]);
   }
-  return checkForRepeatsOnSection(columnArray, usableNums);
+  checkForRepeatsOnSection(columnArray, usableNumList);
+  // return checkForRepeatsOnSection(columnArray, usableNums);
 }
 
 function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
@@ -102,15 +117,22 @@ function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
   };
 
   for (let i = region.row; i < region.row + SUDOKUINNERGRIDWIDTH; i++) {
-      for (let j = region.column; j < region.column + SUDOKUINNERGRIDWIDTH; j++) {
-        regionArray.push(this.board[i,j]);
-      }
-      
+    for (let j = region.column; j < region.column + SUDOKUINNERGRIDWIDTH; j++) {
+      regionArray.push(this.board[i][j]);
+    }
   }
 
-  return checkForRepeatsOnSection(regionArray, usableNums);
+  checkForRepeatsOnSection(regionArray, usableNumList);
+  // return checkForRepeatsOnSection(regionArray, usableNums);
 }
 
 function checkForRepeatsOnSection(sectionList, usableNums) {
-  
+  // Reverse for-loop makes it easier to remove items from an array
+  for (let i = usableNums.length - 1; i > -1; i--) {
+    var num = usableNums[i];
+    if (sectionList.includes(num)) {
+      usableNums.pop(num);
+    }
+  }
+  // return usableNums;
 }
