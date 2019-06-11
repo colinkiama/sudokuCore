@@ -49,7 +49,7 @@ function getValidCellsForRow(currentRow) {
     // 2nd constraint (Regions of previous cells)
     // Tip (use modulus '%' to figure out if cell is in same region)
 
-    if (cell.row % SUDOKUINNERGRIDWIDTH > 0) {
+    if (currentRow % SUDOKUINNERGRIDWIDTH > 0) {
       // This row isn't a new region so this constraint will apply.
       cellList = cellList.filter(isNotInSameRegionAsUsedDigitCells);
     }
