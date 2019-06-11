@@ -74,7 +74,7 @@ function fillBoard() {
 
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
-      selectedCell = {row: i, column: j};
+      var selectedCell = {row: i, column: j};
       console.log(selectedCell);
 
       var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -105,18 +105,19 @@ function fillBoard() {
           
           usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
           
-          isBacktrackingRequired = usableNums.length > 0;
+          isBacktrackingRequired = !usableNums.length > 0;
           
           backTrackIndex++;
         }
 
       }
-    var numToUse = usableNums[getRandomInt(usableNums.length)];
-    this.board[selectedCell.row][selectedCell.column] = numToUse;
-
+      var numToUse = usableNums[0];
+      this.board[selectedCell.row][selectedCell.column] = numToUse;
+      console.log(this.board);
     }
-
+    
   }
+
   console.log(this.board);
 }
 
@@ -127,11 +128,13 @@ function getLastCellFromCurrentCell(selectedCell){
         lastCellRow = lastCellRow - 1;
         lastCellColumn = SUDOKUBOARDWIDTH - 1;
     }
+  
   return {row: lastCellRow, column: lastCellColumn};
 }
 
-function backTrack(cell, backTrackIndex){
-  this.board[cell.row][cell.column] = null;  
+function backTrack(backTrackIndex, selectedCell){
+  console.log("Cell on backtrack: " + selectedCell.row + ", " + selectedCell.column);
+  this.board[selectedCell.row][selectedCell.column] = null;
   var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   usableNums = shuffle(usableNums);
@@ -157,9 +160,9 @@ function backTrack(cell, backTrackIndex){
 
       usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
       
-      isBacktrackingRequired = usableNums.length > 0;
+      isBacktrackingRequired = !usableNums.length > 0;
       
-      nextUsableIndexToBacktrackTo++;
+      backTrackIndex++;
     }
 
   }
