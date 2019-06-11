@@ -78,6 +78,10 @@ function fillBoard() {
       console.log(selectedCell);
 
       var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      
+      if(i == 0){
+        usableNums = shuffle(usableNums);
+      }
 
     
       usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
@@ -91,11 +95,19 @@ function fillBoard() {
       // checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
       if (!usableNums.length > 0){
         var isBacktrackingRequired = true;
-        var nextUsableIndexToBacktrackTo = 1;
+        var backTrackIndex = 1;
         while(isBacktrackingRequired){
-          usableNums = backTrack.call(this, nextUsableIndexToBacktrackTo, getLastCellFromCurrentCell(selectedCell));
+          backTrack.call(this, backTrackIndex, getLastCellFromCurrentCell(selectedCell));
+          
+          usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+          
+          usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+          
+          usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+          
           isBacktrackingRequired = usableNums.length > 0;
-          nextUsableIndexToBacktrackTo++;
+          
+          backTrackIndex++;
         }
 
       }
@@ -118,8 +130,56 @@ function getLastCellFromCurrentCell(selectedCell){
   return {row: lastCellRow, column: lastCellColumn};
 }
 
-function backTrack(cell, nextUsableNumIndexToUse){
+function backTrack(cell, backTrackIndex){
+  this.board[cell.row][cell.column] = null;  
+  var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  usableNums = shuffle(usableNums);
+
+  usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+
+  usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+
+  usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
   
+  // cuts list down to numbers not used yet.
+  usableNums.splice(0, backTrackIndex)
+
+  if (!usableNums.length > 0){
+    var isBacktrackingRequired = true;
+    var backTrackIndex = 1;
+    while(isBacktrackingRequired){
+      backTrack.call(this, backTrackIndex, getLastCellFromCurrentCell(selectedCell));
+    
+      usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+
+      usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+
+      usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+      
+      isBacktrackingRequired = usableNums.length > 0;
+      
+      nextUsableIndexToBacktrackTo++;
+    }
+
+  }
+
+  
+  var numToUse = usableNums[getRandomInt(usableNums.length)];
+  this.board[selectedCell.row][selectedCell.column] = numToUse;
+
+}
+
+
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
+  }
+  return a;
 }
 
 function getRandomInt(upperBound) {
