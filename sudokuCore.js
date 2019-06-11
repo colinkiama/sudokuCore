@@ -99,6 +99,8 @@ function fillBoard() {
         while(isBacktrackingRequired){
           backTrack.call(this, backTrackIndex, getLastCellFromCurrentCell(selectedCell));
           
+          usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
           usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
           
           usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
@@ -107,7 +109,7 @@ function fillBoard() {
           
           isBacktrackingRequired = !usableNums.length > 0;
           
-          backTrackIndex++;
+          backTrackIndex = backTrackIndex + 1;
         }
 
       }
@@ -152,6 +154,8 @@ function backTrack(backTrackIndex, selectedCell){
     while(isBacktrackingRequired){
       backTrack.call(this, backTrackIndex, getLastCellFromCurrentCell(selectedCell));
     
+      usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
       usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
       usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
@@ -160,7 +164,7 @@ function backTrack(backTrackIndex, selectedCell){
       
       isBacktrackingRequired = !usableNums.length > 0;
       
-      backTrackIndex++;
+      backTrackIndex = backTrackIndex + 1;
     }
 
   }
