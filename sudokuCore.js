@@ -52,10 +52,32 @@ function fillBoard() {
   // 2. A column must not have repeated digits
   // 3. Inner 3x3 regions must not have repeated digits
 
-  for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
-    var selectedCell = selectCellRandomly();
-    console.log(selectedCell);
-    var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  // for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
+  //   var selectedCell = selectCellRandomly();
+  //   console.log(selectedCell);
+  //   var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    
+  //     usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+
+  //     usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+
+  //     usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+
+  //     // checkIfRowRepeats.call(this, selectedCell, usableNums);
+  //     // checkIfColumnRepeats.call(this, selectedCell, usableNums);
+  //     // checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+
+  //   var numToUse = usableNums[getRandomInt(usableNums.length)];
+  //   this.board[selectedCell.row][selectedCell.column] = numToUse;
+  // }
+
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
+    for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
+      selectedCell = {row: i, column: j};
+      console.log(selectedCell);
+
+      var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     
       usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
@@ -70,6 +92,9 @@ function fillBoard() {
 
     var numToUse = usableNums[getRandomInt(usableNums.length)];
     this.board[selectedCell.row][selectedCell.column] = numToUse;
+
+    }
+
   }
   console.log(this.board);
 }
