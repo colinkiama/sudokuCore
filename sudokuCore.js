@@ -137,8 +137,6 @@ function backTrack(backTrackIndex, selectedCell){
   this.board[selectedCell.row][selectedCell.column] = null;
   var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-  usableNums = shuffle(usableNums);
-
   usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
   usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
@@ -168,7 +166,7 @@ function backTrack(backTrackIndex, selectedCell){
   }
 
   
-  var numToUse = usableNums[getRandomInt(usableNums.length)];
+  var numToUse = usableNums[0];
   this.board[selectedCell.row][selectedCell.column] = numToUse;
 
 }
