@@ -21,6 +21,9 @@ class SudokuBoard {
 function fillBoard() {
   // foreach digit, loop through rows
   this.unusedDigits.forEach(digit => {
+    // For each digit you'll be able to see cells that were valid for
+    // each row to avoid unnecessarily re-applying constraints
+    // when backtracking
     var validCellsRowMap = new Map();
     for (let currentRow = 0; currentRow < SUDOKUBOARDWIDTH; currentRow++) {
       validCellsRowMap[currentRow] = getValidCellsForRow.call(this, currentRow);
