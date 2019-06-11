@@ -89,7 +89,16 @@ function fillBoard() {
       // checkIfRowRepeats.call(this, selectedCell, usableNums);
       // checkIfColumnRepeats.call(this, selectedCell, usableNums);
       // checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+      if (!usableNums.length > 0){
+        var isBacktrackingRequired = true;
+        var nextUsableIndexToBacktrackTo = 1;
+        while(isBacktrackingRequired){
+          usableNums = backTrack.call(this, nextUsableIndexToBacktrackTo, getLastCellFromCurrentCell(selectedCell));
+          isBacktrackingRequired = usableNums.length > 0;
+          nextUsableIndexToBacktrackTo++;
+        }
 
+      }
     var numToUse = usableNums[getRandomInt(usableNums.length)];
     this.board[selectedCell.row][selectedCell.column] = numToUse;
 
@@ -97,6 +106,20 @@ function fillBoard() {
 
   }
   console.log(this.board);
+}
+
+function getLastCellFromCurrentCell(selectedCell){
+  var lastCellRow = selectedCell.row;  
+  var lastCellColumn = selectedCell.column - 1;
+    if(lastCellColumn < 0){
+        lastCellRow = lastCellRow - 1;
+        lastCellColumn = SUDOKUBOARDWIDTH - 1;
+    }
+  return {row: lastCellRow, column: lastCellColumn};
+}
+
+function backTrack(cell, nextUsableNumIndexToUse){
+  
 }
 
 function getRandomInt(upperBound) {
