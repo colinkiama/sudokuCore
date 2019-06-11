@@ -54,24 +54,19 @@ function fillBoard() {
 
   for (let i = 0; i < SUDOKUBOARDWIDTH * SUDOKUBOARDWIDTH; i++) {
     var selectedCell = selectCellRandomly();
+    console.log(selectedCell);
     var usableNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     
-      // usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
+      usableNums = checkIfRowRepeats.call(this, selectedCell, usableNums);
 
-      // usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
+      usableNums = checkIfColumnRepeats.call(this, selectedCell, usableNums);
 
-      // usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
+      usableNums = checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
 
-      checkIfRowRepeats.call(this, selectedCell, usableNums);
-      console.log("row: " + usableNums);
-
-      checkIfColumnRepeats.call(this, selectedCell, usableNums);
-      console.log("column: "  + usableNums);
-      
-      checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
-      console.log("3x3 Region: "+ usableNums);
-    
+      // checkIfRowRepeats.call(this, selectedCell, usableNums);
+      // checkIfColumnRepeats.call(this, selectedCell, usableNums);
+      // checkIf3x3RegionRepeats.call(this, selectedCell, usableNums);
 
     var numToUse = usableNums[getRandomInt(usableNums.length)];
     this.board[selectedCell.row][selectedCell.column] = numToUse;
@@ -84,6 +79,7 @@ function getRandomInt(upperBound) {
 }
 
 function selectCellRandomly() {
+  console.log("Unused Cells Length : " + unusedCells.length);
   var cellIndex = Math.floor(Math.random() * Math.floor(unusedCells.length));
   var selectedCell = unusedCells[cellIndex];
   unusedCells.splice(cellIndex, 1);
@@ -98,8 +94,8 @@ function checkIfRowRepeats(selectedCell, usableNumList) {
       rowArray.push(itemToPush);
     }
   }
-  checkForRepeatsOnSection(rowArray, usableNumList);
-  // return checkForRepeatsOnSection(rowArray, usableNumList);
+  // checkForRepeatsOnSection(rowArray, usableNumList);
+  return checkForRepeatsOnSection(rowArray, usableNumList);
 }
 
 function checkIfColumnRepeats(selectedCell, usableNumList) {
@@ -110,8 +106,8 @@ function checkIfColumnRepeats(selectedCell, usableNumList) {
       columnArray.push(itemToPush);
     }
   }
-  checkForRepeatsOnSection(columnArray, usableNumList);
-  // return checkForRepeatsOnSection(columnArray, usableNumList);
+  // checkForRepeatsOnSection(columnArray, usableNumList);
+  return checkForRepeatsOnSection(columnArray, usableNumList);
 }
 
 function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
@@ -139,8 +135,8 @@ function checkIf3x3RegionRepeats(selectedCell, usableNumList) {
     }
   }
 
-  checkForRepeatsOnSection(regionArray, usableNumList);
-  // return checkForRepeatsOnSection(regionArray, usableNumList);
+  // checkForRepeatsOnSection(regionArray, usableNumList);
+  return checkForRepeatsOnSection(regionArray, usableNumList);
 }
 
 function checkForRepeatsOnSection(sectionList, usableNums) {
@@ -149,8 +145,12 @@ function checkForRepeatsOnSection(sectionList, usableNums) {
   for (let i = startIndex; i > -1; i--) {
     var num = usableNums[i];
     if (sectionList.includes(num)) {
+      // if(usableNums.length == 1){
+      //   console.log("final stand");
+      // }
       usableNums.splice(i,1);
+      // console.log(usableNums);
     }
   }
-  // return usableNums;
+  return usableNums;
 }
