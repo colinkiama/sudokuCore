@@ -27,11 +27,12 @@ class SudokuBoard {
   }
 }
 
-function create3DArray(){
+function create3DArray() {
   var outerArray = new Array(SUDOKUBOARDWIDTH);
   for (let i = 0; i < outerArray.length; i++) {
+    outerArray[i] = new Array(SUDOKUBOARDWIDTH);
     for (let j = 0; j < outerArray.length; j++) {
-      outerArray[i][j] = []; 
+      outerArray[i][j] = [];
     }
   }
 
@@ -81,7 +82,6 @@ function fillBoard() {
 function backTrack(digit, backTrackRow) {
   var failedCell = currentDigitCells.pop();
 
-
   // You need to unset the cell
   this.board[failedCell.row][failedCell.column] = null;
   exceptionsList[failedCell.row][failedCell.column].push(failedCell);
@@ -110,7 +110,6 @@ function selectRandomInt(upperBound) {
   return Math.floor(Math.random() * Math.floor(upperBound));
 }
 
-
 function getValidCellsForRow(currentRow) {
   var rowValues = this.board[currentRow];
   var cellList = [];
@@ -136,15 +135,19 @@ function getValidCellsForRow(currentRow) {
 
   var willBacktrackConstraintBeApplied = false;
   // Backtrack constraint (Is not in invalid cells)
-  exceptionList[currentRow].forEach(column => {
-    column.forEach(columnList => {
-      if(columnList.length > 0){
+  var currentColumnsWithExceptions = exceptionsList[currentRow];
+  for (let i = 0; i < currentColumnsWithExceptions.length; i++) {
+    var columnList = currentColumnsWithExceptions[i];
+    for (let j = 0; j < columnList.length; j++) {
+      if (columnList.length > 0) {
         willBacktrackConstraintBeApplied = true;
         break;
       }
-    });
-    
-  });
+    }
+    if (willBacktrackConstraintBeApplied) {
+      break;
+    }
+  }
 
   if (willBacktrackConstraintBeApplied) {
     cellList = cellList.filter(isNotInInvalidCellsList, currentRow);
@@ -161,18 +164,15 @@ function isNotInInvalidCellsList(cell) {
   for (let i = 0; i < currentColumnsWithExceptions.length; i++) {
     var columnList = currentColumnsWithExceptions[i];
     for (let j = 0; j < columnList.length; j++) {
-      if(columnList.includes(cell)){
+      if (columnList.includes(cell)) {
         isNotInInvalid = false;
         break;
       }
-      
     }
-    if(isNotInInvalid == false){
+    if (isNotInInvalid == false) {
       break;
     }
   }
-  
-  
 
   return isNotInInvalid;
 }
@@ -184,10 +184,15 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
   // the cell you are testing.
   var isNotInSameRegion = true;
 
-  var currentRegionToCheck = Math.floor(currentDigitCells.length / SUDOKUINNERGRIDWIDTH);
+  var currentRegionToCheck = Math.floor(
+    currentDigitCells.length / SUDOKUINNERGRIDWIDTH
+  );
   var startIndexToInclude = currentRegionToCheck * SUDOKUINNERGRIDWIDTH;
   var endBoundIndex = startIndexToInclude + SUDOKUINNERGRIDWIDTH;
-  var usedCellsInCurrentRegion = currentDigitCells.slice(startIndexToInclude, endBoundIndex);
+  var usedCellsInCurrentRegion = currentDigitCells.slice(
+    startIndexToInclude,
+    endBoundIndex
+  );
 
   for (let i = 0; i < usedCellsInCurrentRegion.length; i++) {
     if (
