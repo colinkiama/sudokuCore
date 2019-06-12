@@ -3,10 +3,10 @@ const SUDOKUBOARDWIDTH = 9;
 const SUDOKUINNERGRIDWIDTH = 3;
 
 var digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-var currentDigitCells = [];
 
 var validCellsMap = new Map();
 var invalidCellsMap = new Map();
+var currentDigitCellsMap = new Map();
 
 // Classes
 class SudokuBoard {
@@ -25,9 +25,20 @@ class SudokuBoard {
 }
 
 function fillMaps() {
-  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
-    validCellsMap[i] = [];
-    invalidCellsMap[i] = [];
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) 
+  {
+    // first two maps are digits to rows with an array of cells.
+    validCellsMap[digits[i]] = new Array(9);
+    invalidCellsMap[digits[i]] = new Array(9);
+
+    // this map is [digits] to array of cells
+    currentDigitCellsMap[digits[i]] = []
+
+    for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
+      validCellsMap[digits[i]][j] = [];
+      invalidCellsMap[digits[i]][j] = [];
+
+    }
   }
 }
 
