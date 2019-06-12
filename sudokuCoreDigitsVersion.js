@@ -102,7 +102,6 @@ function backTrack(digit, backTrackRow) {
     invalidCellsMap[digit][backTrackRow] = [];
 
     // check if you need to go back down a digit
-    // check if you need to go back down a digit
     var backRow = backTrackRow - 1;
     var backDigit = digit;
     if(backTrackRow - 1 == -1){
@@ -113,7 +112,7 @@ function backTrack(digit, backTrackRow) {
 
     }
     while (isBacktrackingRequired) {
-      backTrack.call(this, backDigit, backRow - 1);
+      backTrack.call(this, backDigit, backRow);
       validCellsMap[digit][backTrackRow] = getValidCellsForRow.call(
         this,
         backTrackRow,
