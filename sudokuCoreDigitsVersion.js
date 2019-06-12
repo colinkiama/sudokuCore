@@ -55,17 +55,19 @@ function fillBoard() {
     }
     invalidCellsMap.clear();
     validCellsMap.clear();
+    currentDigitCells.splice();
   });
 }
 
 function backTrack(digit, backTrackRow) {
-  invalidCellsMap[backTrackRow] = validCellsMap[backTrackRow].pop();
+  var failedCell = currentDigitCells.pop();
+  invalidCellsMap[backTrackRow].push(failedCell);
 
    // Check if you need to backtrack
    if (!validCellsMap[backTrackRow].length > 0) {
      var isBacktrackingRequired = true;
+     invalidCellsMap[backTrackRow].clear();
     while (isBacktrackingRequired) {
-      invalidCellsMap[backTrackRow].clear();
       backTrack.call(this, backTrackRow - 1);
       validCellsMap[backTrackRow] = getValidCellsForRow.call(this, backTrackRow);
       isBacktrackingRequired = !validCellsMap[backTrackRow].length > 0;
@@ -74,6 +76,7 @@ function backTrack(digit, backTrackRow) {
   var indexToUse = selectRandomInt(validCellsMap[backTrackRow].length);
   var cellToUse = validCellsMap[backTrackRow][indexToUse];
   this.board[cellToUse.row][cellToUse.column] = digit;
+  currentDigitCells.push(cellToUse);
 
 }
 
@@ -145,13 +148,13 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
       break;
     }
   }
-  return isNotInSameColumnAsUsedDigitCells;
+  return isNotInSameRegion;
 }
 
 function isNotInSameColumnAsUsedDigitCells(cell) {
   var isNotInSameColumn = true;
   for (let i = 0; i < currentDigitCells.length; i++) {
-    if ((currentDigitCells[i].column = cell.column)) {
+    if ((currentDigitCells[i].column == cell.column)) {
       isNotInSameColumn = false;
       break;
     }
