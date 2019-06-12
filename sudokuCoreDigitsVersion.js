@@ -24,11 +24,11 @@ class SudokuBoard {
   }
 }
 
-function fillMaps(){
-  for (let i = 0; i < SUDOKUBOARDWIDTH.length; i++) {
+function fillMaps() {
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     validCellsMap[i] = [];
     invalidCellsMap[i] = [];
- }
+  }
 }
 
 function fillBoard() {
@@ -46,12 +46,18 @@ function fillBoard() {
         var isBacktrackingRequired = true;
         while (isBacktrackingRequired) {
           backTrack.call(this, digit, currentRow - 1);
-          isBacktrackingRequired = !usableNums.length > 0;
+          validCellsMap[currentRow] = getValidCellsForRow.call(
+            this,
+            currentRow
+          );
+          isBacktrackingRequired = !validCellsMap[currentRow].length > 0;
         }
       }
       var indexToUse = selectRandomInt(validCellsMap[currentRow].length);
       var cellToUse = validCellsMap[currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
+      console.log(this.board);
+      currentDigitCells.push(cellToUse);
     }
     invalidCellsMap.clear();
     validCellsMap.clear();
@@ -61,15 +67,24 @@ function fillBoard() {
 
 function backTrack(digit, backTrackRow) {
   var failedCell = currentDigitCells.pop();
-  invalidCellsMap[backTrackRow].push(failedCell);
 
-   // Check if you need to backtrack
-   if (!validCellsMap[backTrackRow].length > 0) {
-     var isBacktrackingRequired = true;
-     invalidCellsMap[backTrackRow].clear();
+  console.log(this.board);
+
+  // You need to unset the cell
+  this.board[failedCell.row][failedCell.column] = null;
+  invalidCellsMap[backTrackRow].push(failedCell);
+  validCellsMap[backTrackRow].pop(failedCell);
+
+  // Check if you need to backtrack
+  if (!validCellsMap[backTrackRow].length > 0) {
+    var isBacktrackingRequired = true;
+    invalidCellsMap[backTrackRow].splice();
     while (isBacktrackingRequired) {
-      backTrack.call(this, backTrackRow - 1);
-      validCellsMap[backTrackRow] = getValidCellsForRow.call(this, backTrackRow);
+      backTrack.call(this, digit, backTrackRow - 1);
+      validCellsMap[backTrackRow] = getValidCellsForRow.call(
+        this,
+        backTrackRow
+      );
       isBacktrackingRequired = !validCellsMap[backTrackRow].length > 0;
     }
   }
@@ -77,12 +92,10 @@ function backTrack(digit, backTrackRow) {
   var cellToUse = validCellsMap[backTrackRow][indexToUse];
   this.board[cellToUse.row][cellToUse.column] = digit;
   currentDigitCells.push(cellToUse);
-
 }
 
 function selectRandomInt(upperBound) {
   return Math.floor(Math.random() * Math.floor(upperBound));
-  
 }
 
 // function shuffle(a) {
@@ -112,7 +125,6 @@ function getValidCellsForRow(currentRow) {
     cellList = cellList.filter(isNotInSameColumnAsUsedDigitCells);
 
     // 2nd constraint (Regions of previous cells)
-    // Tip (use modulus '%' to figure out if cell is in same region)
 
     if (currentRow % SUDOKUINNERGRIDWIDTH > 0) {
       // This row isn't a new region so this constraint will apply.
@@ -121,7 +133,7 @@ function getValidCellsForRow(currentRow) {
   }
 
   // Backtrack constraint (Is not in invalid cells)
-  if (invalidCellsMap[currentRow > 0]) {
+  if (invalidCellsMap[currentRow].length > 0) {
     cellList = cellList.filter(isNotInInvalidCellsList, currentRow);
   }
 
@@ -141,8 +153,8 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
   var isNotInSameRegion = true;
   for (let i = 0; i < currentDigitCells.length; i++) {
     if (
-      currentDigitCells[i].column % SUDOKUINNERGRIDWIDTH ==
-      cell.column % SUDOKUINNERGRIDWIDTH
+      Math.floor(currentDigitCells[i].column / SUDOKUINNERGRIDWIDTH) ==
+      Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
     ) {
       isNotInSameRegion = false;
       break;
@@ -154,7 +166,7 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
 function isNotInSameColumnAsUsedDigitCells(cell) {
   var isNotInSameColumn = true;
   for (let i = 0; i < currentDigitCells.length; i++) {
-    if ((currentDigitCells[i].column == cell.column)) {
+    if (currentDigitCells[i].column == cell.column) {
       isNotInSameColumn = false;
       break;
     }
