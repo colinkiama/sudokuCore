@@ -57,16 +57,18 @@ function fillBoard() {
         var isBacktrackingRequired = true;
 
         // check if you need to go back down a digit
+        var backRow = currentRow - 1;
+        var backDigit = digit;
         if(currentRow - 1 == -1){
           // It will go down to 8 in the method parameter
-          currentRow = 9;
+          backRow = 8;
 
-          digit = digit - 1;
+          backDigit = digit - 1;
 
         }
 
         while (isBacktrackingRequired) {
-          backTrack.call(this, digit, currentRow - 1);
+          backTrack.call(this, backDigit, backRow);
           validCellsMap[digit][currentRow] = getValidCellsForRow.call(
             this,
             currentRow,
@@ -100,15 +102,18 @@ function backTrack(digit, backTrackRow) {
     invalidCellsMap[digit][backTrackRow] = [];
 
     // check if you need to go back down a digit
+    // check if you need to go back down a digit
+    var backRow = backTrackRow - 1;
+    var backDigit = digit;
     if(backTrackRow - 1 == -1){
       // It will go down to 8 in the method parameter
-      backTrackRow = 9;
+      backRow = 8;
 
-      digit = digit - 1;
+      backDigit = digit - 1;
 
     }
     while (isBacktrackingRequired) {
-      backTrack.call(this, digit, backTrackRow - 1);
+      backTrack.call(this, backDigit, backRow - 1);
       validCellsMap[digit][backTrackRow] = getValidCellsForRow.call(
         this,
         backTrackRow,
