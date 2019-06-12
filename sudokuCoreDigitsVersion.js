@@ -8,11 +8,14 @@ var currentDigitCells = [];
 var validCellsMap = new Map();
 var invalidCellsMap = new Map();
 
+var exceptionsList = null;
+
 // Classes
 class SudokuBoard {
   constructor() {
     this.board = create2DArray();
     this.unusedDigits = digits.slice();
+    exceptionsList = create3DArray();
     fillMaps();
   }
 
@@ -22,6 +25,17 @@ class SudokuBoard {
     console.log(this.board);
     // Step 2: Remove cells considering difficulty level.
   }
+}
+
+function create3DArray(){
+  var outerArray = new Array(SUDOKUBOARDWIDTH);
+  for (let i = 0; i < outerArray.length; i++) {
+    for (let j = 0; j < outerArray.length; j++) {
+      outerArray[i][j] = []; 
+    }
+  }
+
+  return outerArray;
 }
 
 function fillMaps() {
@@ -56,7 +70,6 @@ function fillBoard() {
       var indexToUse = selectRandomInt(validCellsMap[currentRow].length);
       var cellToUse = validCellsMap[currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
-      console.log(this.board);
       currentDigitCells.push(cellToUse);
     }
     invalidCellsMap.clear();
@@ -68,11 +81,10 @@ function fillBoard() {
 function backTrack(digit, backTrackRow) {
   var failedCell = currentDigitCells.pop();
 
-  console.log(this.board);
 
   // You need to unset the cell
   this.board[failedCell.row][failedCell.column] = null;
-  invalidCellsMap[backTrackRow].push(failedCell);
+  invalidCellsMap[failedCell.row][failedCell.column].push(failedCell);
   validCellsMap[backTrackRow].pop(failedCell);
 
   // Check if you need to backtrack
@@ -98,16 +110,6 @@ function selectRandomInt(upperBound) {
   return Math.floor(Math.random() * Math.floor(upperBound));
 }
 
-// function shuffle(a) {
-//   var j, x, i;
-//   for (i = a.length - 1; i > 0; i--) {
-//     j = Math.floor(Math.random() * (i + 1));
-//     x = a[i];
-//     a[i] = a[j];
-//     a[j] = x;
-//   }
-//   return a;
-// }
 
 function getValidCellsForRow(currentRow) {
   var rowValues = this.board[currentRow];
