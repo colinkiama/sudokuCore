@@ -61,7 +61,7 @@ function fillBoard() {
     }
     invalidCellsMap.clear();
     validCellsMap.clear();
-    currentDigitCells.splice();
+    currentDigitCells = [];
   });
 }
 
@@ -78,7 +78,7 @@ function backTrack(digit, backTrackRow) {
   // Check if you need to backtrack
   if (!validCellsMap[backTrackRow].length > 0) {
     var isBacktrackingRequired = true;
-    invalidCellsMap[backTrackRow].splice();
+    invalidCellsMap[backTrackRow] = [];
     while (isBacktrackingRequired) {
       backTrack.call(this, digit, backTrackRow - 1);
       validCellsMap[backTrackRow] = getValidCellsForRow.call(
