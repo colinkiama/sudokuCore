@@ -35,23 +35,38 @@ function fillBoard() {
       // Check if you need to backtrack
       if (!validCellsMap[currentRow].length > 0) {
         while (isBacktrackingRequired) {
-          backTrack.call(this, backTrackIndex, currentRow - 1);
-
+          backTrack.call(this, digit, currentRow - 1);
           isBacktrackingRequired = !usableNums.length > 0;
-
-          backTrackIndex = backTrackIndex + 1;
         }
       }
-      var numToUse = usableNums[0];
-      this.board[selectedCell.row][selectedCell.column] = numToUse;
+      var cellToFill = selectRandomInt(validCellsMap[currentRow].length);
+      this.board[cellToFill.row][cellToFill.column] = digit;
     }
     invalidCellsMap.clear();
     validCellsMap.clear();
   });
 }
 
-function backTrack(backTrackIndex, backTrackRow) {
+function backTrack(digit, backTrackRow) {
   invalidCellsMap[backTrackRow] = validCellsMap[backTrackRow].pop();
+
+   // Check if you need to backtrack
+   if (!validCellsMap[backTrackRow].length > 0) {
+    while (isBacktrackingRequired) {
+      invalidCellsMap[backTrackRow].clear();
+      backTrack.call(this, backTrackRow - 1);
+      validCellsMap[backTrackRow] = getValidCellsForRow.call(this, backTrackRow);
+      isBacktrackingRequired = !validCellsMap[backTrackRow].length > 0;
+    }
+  }
+  var cellToFill = selectRandomInt(validCellsMap[backTrackRow].length);
+  this.board[cellToFill.row][cellToFill.column] = digit;
+
+}
+
+function selectRandomInt(upperBound) {
+  return Math.floor(Math.random() * Math.floor(upperBound));
+  
 }
 
 // function shuffle(a) {
