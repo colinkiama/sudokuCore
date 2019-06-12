@@ -5,7 +5,7 @@ const SUDOKUINNERGRIDWIDTH = 3;
 var digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 var currentDigitCells = [];
 
-var validCellsRowMap = new Map();
+var validCellsMap = new Map();
 var invalidCellsMap = new Map();
 
 // Classes
@@ -30,10 +30,10 @@ function fillBoard() {
     // when backtracking
 
     for (let currentRow = 0; currentRow < SUDOKUBOARDWIDTH; currentRow++) {
-      validCellsRowMap[currentRow] = getValidCellsForRow.call(this, currentRow);
+      validCellsMap[currentRow] = getValidCellsForRow.call(this, currentRow);
 
       // Check if you need to backtrack
-      if (!validCellsRowMap[currentRow].length > 0) {
+      if (!validCellsMap[currentRow].length > 0) {
         while (isBacktrackingRequired) {
           backTrack.call(this, backTrackIndex, currentRow - 1);
 
@@ -45,11 +45,13 @@ function fillBoard() {
       var numToUse = usableNums[0];
       this.board[selectedCell.row][selectedCell.column] = numToUse;
     }
+    invalidCellsMap.clear();
+    validCellsMap.clear();
   });
 }
 
 function backTrack(backTrackIndex, backTrackRow) {
-  invalidCellsRowMap[backTrackRow] = validCellsRowMap[backTrackRow].pop();
+  invalidCellsMap[backTrackRow] = validCellsMap[backTrackRow].pop();
 }
 
 // function shuffle(a) {
