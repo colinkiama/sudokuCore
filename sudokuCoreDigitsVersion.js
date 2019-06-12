@@ -79,7 +79,7 @@ function fillBoard() {
       var cellToUse = validCellsMap[digit][currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
       console.log(this.board);
-      currentDigitCells.push(cellToUse);
+      currentDigitCells[digit].push(cellToUse);
     }
   });
 }
@@ -150,7 +150,7 @@ function getValidCellsForRow(currentRow, digit) {
   }
 
   // 1st constraint (cells used previously in higher rows)
-  if (currentDigitCells.length > 0) {
+  if (currentDigitCells[digit].length > 0) {
     cellList = cellList.filter(isNotInSameColumnAsUsedDigitCells, digit);
 
     // 2nd constraint (Regions of previous cells)
