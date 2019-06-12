@@ -24,6 +24,13 @@ class SudokuBoard {
   }
 }
 
+function test(){
+  for (let i = 0; i < 50; i++) {
+    var boardObj = new SudokuBoard();
+    boardObj.createNewGame();
+  }
+}
+
 function fillMaps() {
   for (let i = 0; i < SUDOKUBOARDWIDTH; i++) 
   {
@@ -80,7 +87,7 @@ function fillBoard() {
       var indexToUse = selectRandomInt(validCellsMap[digit][currentRow].length);
       var cellToUse = validCellsMap[digit][currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
-      console.log(this.board);
+      // console.log(this.board);
       currentDigitCellsMap[digit].push(cellToUse);
     }
   });
@@ -89,7 +96,7 @@ function fillBoard() {
 function backTrack(digit, backTrackRow) {
   var failedCell = currentDigitCellsMap[digit].pop();
 
-  console.log(this.board);
+  // console.log(this.board);
 
   // You need to unset the cell
   this.board[failedCell.row][failedCell.column] = null;
