@@ -79,13 +79,13 @@ function fillBoard() {
       var cellToUse = validCellsMap[digit][currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
       console.log(this.board);
-      currentDigitCells[digit].push(cellToUse);
+      currentDigitCellsMap[digit].push(cellToUse);
     }
   });
 }
 
 function backTrack(digit, backTrackRow) {
-  var failedCell = currentDigitCells[digit].pop();
+  var failedCell = currentDigitCellsMap[digit].pop();
 
   console.log(this.board);
 
@@ -120,7 +120,7 @@ function backTrack(digit, backTrackRow) {
   var indexToUse = selectRandomInt(validCellsMap[digit][backTrackRow].length);
   var cellToUse = validCellsMap[digit][backTrackRow][indexToUse];
   this.board[cellToUse.row][cellToUse.column] = digit;
-  currentDigitCells[digit].push(cellToUse);
+  currentDigitCellsMap[digit].push(cellToUse);
 }
 
 function selectRandomInt(upperBound) {
@@ -150,7 +150,7 @@ function getValidCellsForRow(currentRow, digit) {
   }
 
   // 1st constraint (cells used previously in higher rows)
-  if (currentDigitCells[digit].length > 0) {
+  if (currentDigitCellsMap[digit].length > 0) {
     cellList = cellList.filter(isNotInSameColumnAsUsedDigitCells, digit);
 
     // 2nd constraint (Regions of previous cells)
@@ -186,14 +186,14 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
   // the cell you are testing.
   var isNotInSameRegion = true;
   var digit = this;
-  var currentRegionToCheck = Math.floor(currentDigitCells[digit].length / SUDOKUINNERGRIDWIDTH);
+  var currentRegionToCheck = Math.floor(currentDigitCellsMap[digit].length / SUDOKUINNERGRIDWIDTH);
   var startIndexToInclude = currentRegionToCheck * SUDOKUINNERGRIDWIDTH;
   var endBoundIndex = startIndexToInclude + SUDOKUINNERGRIDWIDTH;
-  var usedCellsInCurrentRegion = currentDigitCells[digit].slice(startIndexToInclude, endBoundIndex);
+  var usedCellsInCurrentRegion = currentDigitCellsMap[digit].slice(startIndexToInclude, endBoundIndex);
 
   for (let i = 0; i < usedCellsInCurrentRegion.length; i++) {
     if (
-      Math.floor(currentDigitCells[digit][i].column / SUDOKUINNERGRIDWIDTH) ==
+      Math.floor(currentDigitCellsMap[digit][i].column / SUDOKUINNERGRIDWIDTH) ==
       Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
     ) {
       isNotInSameRegion = false;
@@ -206,8 +206,8 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
 function isNotInSameColumnAsUsedDigitCells(cell) {
   var isNotInSameColumn = true;
   var digit = this;
-  for (let i = 0; i < currentDigitCells[digit].length; i++) {
-    if (currentDigitCells[digit][i].column == cell.column) {
+  for (let i = 0; i < currentDigitCellsMap[digit].length; i++) {
+    if (currentDigitCellsMap[digit][i].column == cell.column) {
       isNotInSameColumn = false;
       break;
     }
