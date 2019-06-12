@@ -84,13 +84,13 @@ function backTrack(digit, backTrackRow) {
 
   // You need to unset the cell
   this.board[failedCell.row][failedCell.column] = null;
-  invalidCellsMap[failedCell.row][failedCell.column].push(failedCell);
+  exceptionsList[failedCell.row][failedCell.column].push(failedCell);
   validCellsMap[backTrackRow].pop(failedCell);
 
   // Check if you need to backtrack
   if (!validCellsMap[backTrackRow].length > 0) {
     var isBacktrackingRequired = true;
-    invalidCellsMap[backTrackRow] = [];
+    exceptionsList[failedCell.row][failedCell.column] = [];
     while (isBacktrackingRequired) {
       backTrack.call(this, digit, backTrackRow - 1);
       validCellsMap[backTrackRow] = getValidCellsForRow.call(
@@ -134,8 +134,19 @@ function getValidCellsForRow(currentRow) {
     }
   }
 
+  var willBacktrackConstraintBeApplied = false;
   // Backtrack constraint (Is not in invalid cells)
-  if (invalidCellsMap[currentRow].length > 0) {
+  exceptionList[currentRow].forEach(column => {
+    column.forEach(columnList => {
+      if(columnList.length > 0){
+        willBacktrackConstraintBeApplied = true;
+        break;
+      }
+    });
+    
+  });
+
+  if (willBacktrackConstraintBeApplied) {
     cellList = cellList.filter(isNotInInvalidCellsList, currentRow);
   }
 
@@ -145,9 +156,24 @@ function getValidCellsForRow(currentRow) {
 function isNotInInvalidCellsList(cell) {
   var currentRow = this;
   var isNotInInvalid = true;
-  if (invalidCellsMap[currentRow].includes(cell)) {
-    isNotInInvalid = false;
+
+  var currentColumnsWithExceptions = exceptionsList[currentRow];
+  for (let i = 0; i < currentColumnsWithExceptions.length; i++) {
+    var columnList = currentColumnsWithExceptions[i];
+    for (let j = 0; j < columnList.length; j++) {
+      if(columnList.includes(cell)){
+        isNotInInvalid = false;
+        break;
+      }
+      
+    }
+    if(isNotInInvalid == false){
+      break;
+    }
   }
+  
+  
+
   return isNotInInvalid;
 }
 
