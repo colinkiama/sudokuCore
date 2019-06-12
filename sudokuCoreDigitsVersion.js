@@ -150,8 +150,18 @@ function isNotInInvalidCellsList(cell) {
 }
 
 function isNotInSameRegionAsUsedDigitCells(cell) {
+  // Step 1: Get used cells in the current region [x]
+  // Step 2: Loop through the cells in the current region
+  // Step 3: Compare each cell in the current region with
+  // the cell you are testing.
   var isNotInSameRegion = true;
-  for (let i = 0; i < currentDigitCells.length; i++) {
+
+  var currentRegionToCheck = Math.floor(currentDigitCells.length / SUDOKUINNERGRIDWIDTH);
+  var startIndexToInclude = currentRegionToCheck * SUDOKUINNERGRIDWIDTH;
+  var endBoundIndex = startIndexToInclude + SUDOKUINNERGRIDWIDTH;
+  var usedCellsInCurrentRegion = currentDigitCells.slice(startIndexToInclude, endBoundIndex);
+
+  for (let i = 0; i < usedCellsInCurrentRegion.length; i++) {
     if (
       Math.floor(currentDigitCells[i].column / SUDOKUINNERGRIDWIDTH) ==
       Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
