@@ -13,13 +13,22 @@ class SudokuBoard {
   constructor() {
     this.board = create2DArray();
     this.unusedDigits = digits.slice();
+    fillMaps();
   }
 
   createNewGame() {
     // Step 1: Fill up grid with numbers considering sudoku constraints
     fillBoard.call(this);
+    console.log(this.board);
     // Step 2: Remove cells considering difficulty level.
   }
+}
+
+function fillMaps(){
+  for (let i = 0; i < SUDOKUBOARDWIDTH.length; i++) {
+    validCellsMap[i] = [];
+    invalidCellsMap[i] = [];
+ }
 }
 
 function fillBoard() {
@@ -34,13 +43,15 @@ function fillBoard() {
 
       // Check if you need to backtrack
       if (!validCellsMap[currentRow].length > 0) {
+        var isBacktrackingRequired = true;
         while (isBacktrackingRequired) {
           backTrack.call(this, digit, currentRow - 1);
           isBacktrackingRequired = !usableNums.length > 0;
         }
       }
-      var cellToFill = selectRandomInt(validCellsMap[currentRow].length);
-      this.board[cellToFill.row][cellToFill.column] = digit;
+      var indexToUse = selectRandomInt(validCellsMap[currentRow].length);
+      var cellToUse = validCellsMap[currentRow][indexToUse];
+      this.board[cellToUse.row][cellToUse.column] = digit;
     }
     invalidCellsMap.clear();
     validCellsMap.clear();
@@ -52,6 +63,7 @@ function backTrack(digit, backTrackRow) {
 
    // Check if you need to backtrack
    if (!validCellsMap[backTrackRow].length > 0) {
+     var isBacktrackingRequired = true;
     while (isBacktrackingRequired) {
       invalidCellsMap[backTrackRow].clear();
       backTrack.call(this, backTrackRow - 1);
@@ -59,8 +71,9 @@ function backTrack(digit, backTrackRow) {
       isBacktrackingRequired = !validCellsMap[backTrackRow].length > 0;
     }
   }
-  var cellToFill = selectRandomInt(validCellsMap[backTrackRow].length);
-  this.board[cellToFill.row][cellToFill.column] = digit;
+  var indexToUse = selectRandomInt(validCellsMap[backTrackRow].length);
+  var cellToUse = validCellsMap[backTrackRow][indexToUse];
+  this.board[cellToUse.row][cellToUse.column] = digit;
 
 }
 
@@ -105,9 +118,11 @@ function getValidCellsForRow(currentRow) {
   }
 
   // Backtrack constraint (Is not in invalid cells)
-  if (invalidCellsMap[cuurentRow > 0]) {
+  if (invalidCellsMap[currentRow > 0]) {
     cellList = cellList.filter(isNotInInvalidCellsList, currentRow);
   }
+
+  return cellList;
 }
 
 function isNotInInvalidCellsList(cell) {
