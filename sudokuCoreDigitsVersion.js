@@ -50,59 +50,77 @@ function fillBoard() {
     // when backtracking
 
     for (let currentRow = 0; currentRow < SUDOKUBOARDWIDTH; currentRow++) {
-      validCellsMap[currentRow] = getValidCellsForRow.call(this, currentRow);
+      validCellsMap[digit][currentRow] = getValidCellsForRow.call(this, currentRow, digit);
 
       // Check if you need to backtrack
-      if (!validCellsMap[currentRow].length > 0) {
+      if (!validCellsMap[digit][currentRow].length > 0) {
         var isBacktrackingRequired = true;
+
+        // check if you need to go back down a digit
+        if(currentRow - 1 == -1){
+          // It will go down to 8 in the method parameter
+          currentRow = 9;
+
+          digit = digit - 1;
+
+        }
+
         while (isBacktrackingRequired) {
           backTrack.call(this, digit, currentRow - 1);
-          validCellsMap[currentRow] = getValidCellsForRow.call(
+          validCellsMap[digit][currentRow] = getValidCellsForRow.call(
             this,
-            currentRow
+            currentRow,
+            digit
           );
-          isBacktrackingRequired = !validCellsMap[currentRow].length > 0;
+          isBacktrackingRequired = !validCellsMap[digit][currentRow].length > 0;
         }
       }
-      var indexToUse = selectRandomInt(validCellsMap[currentRow].length);
-      var cellToUse = validCellsMap[currentRow][indexToUse];
+      var indexToUse = selectRandomInt(validCellsMap[digit][currentRow].length);
+      var cellToUse = validCellsMap[digit][currentRow][indexToUse];
       this.board[cellToUse.row][cellToUse.column] = digit;
       console.log(this.board);
       currentDigitCells.push(cellToUse);
     }
-    invalidCellsMap.clear();
-    validCellsMap.clear();
-    currentDigitCells = [];
   });
 }
 
 function backTrack(digit, backTrackRow) {
-  var failedCell = currentDigitCells.pop();
+  var failedCell = currentDigitCells[digit].pop();
 
   console.log(this.board);
 
   // You need to unset the cell
   this.board[failedCell.row][failedCell.column] = null;
-  invalidCellsMap[backTrackRow].push(failedCell);
-  validCellsMap[backTrackRow].pop(failedCell);
+  invalidCellsMap[digit][backTrackRow].push(failedCell);
+  validCellsMap[digit][backTrackRow].pop(failedCell);
 
   // Check if you need to backtrack
-  if (!validCellsMap[backTrackRow].length > 0) {
+  if (!validCellsMap[digit][backTrackRow].length > 0) {
     var isBacktrackingRequired = true;
-    invalidCellsMap[backTrackRow] = [];
+    invalidCellsMap[digit][backTrackRow] = [];
+
+    // check if you need to go back down a digit
+    if(backTrackRow - 1 == -1){
+      // It will go down to 8 in the method parameter
+      backTrackRow = 9;
+
+      digit = digit - 1;
+
+    }
     while (isBacktrackingRequired) {
       backTrack.call(this, digit, backTrackRow - 1);
-      validCellsMap[backTrackRow] = getValidCellsForRow.call(
+      validCellsMap[digit][backTrackRow] = getValidCellsForRow.call(
         this,
-        backTrackRow
+        backTrackRow,
+        digit
       );
-      isBacktrackingRequired = !validCellsMap[backTrackRow].length > 0;
+      isBacktrackingRequired = !validCellsMap[digit][backTrackRow].length > 0;
     }
   }
-  var indexToUse = selectRandomInt(validCellsMap[backTrackRow].length);
-  var cellToUse = validCellsMap[backTrackRow][indexToUse];
+  var indexToUse = selectRandomInt(validCellsMap[digit][backTrackRow].length);
+  var cellToUse = validCellsMap[digit][backTrackRow][indexToUse];
   this.board[cellToUse.row][cellToUse.column] = digit;
-  currentDigitCells.push(cellToUse);
+  currentDigitCells[digit].push(cellToUse);
 }
 
 function selectRandomInt(upperBound) {
@@ -120,7 +138,7 @@ function selectRandomInt(upperBound) {
 //   return a;
 // }
 
-function getValidCellsForRow(currentRow) {
+function getValidCellsForRow(currentRow, digit) {
   var rowValues = this.board[currentRow];
   var cellList = [];
 
@@ -133,28 +151,29 @@ function getValidCellsForRow(currentRow) {
 
   // 1st constraint (cells used previously in higher rows)
   if (currentDigitCells.length > 0) {
-    cellList = cellList.filter(isNotInSameColumnAsUsedDigitCells);
+    cellList = cellList.filter(isNotInSameColumnAsUsedDigitCells, digit);
 
     // 2nd constraint (Regions of previous cells)
 
     if (currentRow % SUDOKUINNERGRIDWIDTH > 0) {
       // This row isn't a new region so this constraint will apply.
-      cellList = cellList.filter(isNotInSameRegionAsUsedDigitCells);
+      cellList = cellList.filter(isNotInSameRegionAsUsedDigitCells, digit);
     }
   }
 
   // Backtrack constraint (Is not in invalid cells)
-  if (invalidCellsMap[currentRow].length > 0) {
-    cellList = cellList.filter(isNotInInvalidCellsList, currentRow);
+  if (invalidCellsMap[digit][currentRow].length > 0) {
+    cellList = cellList.filter(isNotInInvalidCellsList, [currentRow, digit]);
   }
 
   return cellList;
 }
 
 function isNotInInvalidCellsList(cell) {
-  var currentRow = this;
+  var currentRow = this[0];
+  var digit = this[1];
   var isNotInInvalid = true;
-  if (invalidCellsMap[currentRow].includes(cell)) {
+  if (invalidCellsMap[digit][currentRow].includes(cell)) {
     isNotInInvalid = false;
   }
   return isNotInInvalid;
@@ -166,15 +185,15 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
   // Step 3: Compare each cell in the current region with
   // the cell you are testing.
   var isNotInSameRegion = true;
-
-  var currentRegionToCheck = Math.floor(currentDigitCells.length / SUDOKUINNERGRIDWIDTH);
+  var digit = this;
+  var currentRegionToCheck = Math.floor(currentDigitCells[digit].length / SUDOKUINNERGRIDWIDTH);
   var startIndexToInclude = currentRegionToCheck * SUDOKUINNERGRIDWIDTH;
   var endBoundIndex = startIndexToInclude + SUDOKUINNERGRIDWIDTH;
-  var usedCellsInCurrentRegion = currentDigitCells.slice(startIndexToInclude, endBoundIndex);
+  var usedCellsInCurrentRegion = currentDigitCells[digit].slice(startIndexToInclude, endBoundIndex);
 
   for (let i = 0; i < usedCellsInCurrentRegion.length; i++) {
     if (
-      Math.floor(currentDigitCells[i].column / SUDOKUINNERGRIDWIDTH) ==
+      Math.floor(currentDigitCells[digit][i].column / SUDOKUINNERGRIDWIDTH) ==
       Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
     ) {
       isNotInSameRegion = false;
@@ -186,8 +205,9 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
 
 function isNotInSameColumnAsUsedDigitCells(cell) {
   var isNotInSameColumn = true;
-  for (let i = 0; i < currentDigitCells.length; i++) {
-    if (currentDigitCells[i].column == cell.column) {
+  var digit = this;
+  for (let i = 0; i < currentDigitCells[digit].length; i++) {
+    if (currentDigitCells[digit][i].column == cell.column) {
       isNotInSameColumn = false;
       break;
     }
