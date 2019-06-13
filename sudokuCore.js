@@ -24,7 +24,7 @@ class SudokuBoard {
   }
 }
 
-function test(){
+function test() {
   for (let i = 0; i < 50; i++) {
     var boardObj = new SudokuBoard();
     boardObj.createNewGame();
@@ -32,19 +32,17 @@ function test(){
 }
 
 function fillMaps() {
-  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) 
-  {
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
     // first two maps are digits to rows with an array of cells.
     validCellsMap[digits[i]] = new Array(9);
     invalidCellsMap[digits[i]] = new Array(9);
 
     // this map is [digits] to array of cells
-    currentDigitCellsMap[digits[i]] = []
+    currentDigitCellsMap[digits[i]] = [];
 
     for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
       validCellsMap[digits[i]][j] = [];
       invalidCellsMap[digits[i]][j] = [];
-
     }
   }
 }
@@ -57,7 +55,11 @@ function fillBoard() {
     // when backtracking
 
     for (let currentRow = 0; currentRow < SUDOKUBOARDWIDTH; currentRow++) {
-      validCellsMap[digit][currentRow] = getValidCellsForRow.call(this, currentRow, digit);
+      validCellsMap[digit][currentRow] = getValidCellsForRow.call(
+        this,
+        currentRow,
+        digit
+      );
 
       // Check if you need to backtrack
       if (!validCellsMap[digit][currentRow].length > 0) {
@@ -66,12 +68,11 @@ function fillBoard() {
         // check if you need to go back down a digit
         var backRow = currentRow - 1;
         var backDigit = digit;
-        if(currentRow - 1 == -1){
+        if (currentRow - 1 == -1) {
           // It will go down to 8 in the method parameter
           backRow = 8;
 
           backDigit = digit - 1;
-
         }
 
         while (isBacktrackingRequired) {
@@ -111,12 +112,11 @@ function backTrack(digit, backTrackRow) {
     // check if you need to go back down a digit
     var backRow = backTrackRow - 1;
     var backDigit = digit;
-    if(backTrackRow - 1 == -1){
+    if (backTrackRow - 1 == -1) {
       // It will go down to 8 in the method parameter
       backRow = 8;
 
       backDigit = digit - 1;
-
     }
     while (isBacktrackingRequired) {
       backTrack.call(this, backDigit, backRow);
@@ -197,15 +197,21 @@ function isNotInSameRegionAsUsedDigitCells(cell) {
   // the cell you are testing.
   var isNotInSameRegion = true;
   var digit = this;
-  var currentRegionToCheck = Math.floor(currentDigitCellsMap[digit].length / SUDOKUINNERGRIDWIDTH);
+  var currentRegionToCheck = Math.floor(
+    currentDigitCellsMap[digit].length / SUDOKUINNERGRIDWIDTH
+  );
   var startIndexToInclude = currentRegionToCheck * SUDOKUINNERGRIDWIDTH;
   var endBoundIndex = startIndexToInclude + SUDOKUINNERGRIDWIDTH;
-  var usedCellsInCurrentRegion = currentDigitCellsMap[digit].slice(startIndexToInclude, endBoundIndex);
+  var usedCellsInCurrentRegion = currentDigitCellsMap[digit].slice(
+    startIndexToInclude,
+    endBoundIndex
+  );
 
   for (let i = 0; i < usedCellsInCurrentRegion.length; i++) {
     if (
-      Math.floor(currentDigitCellsMap[digit][i].column / SUDOKUINNERGRIDWIDTH) ==
-      Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
+      Math.floor(
+        currentDigitCellsMap[digit][i].column / SUDOKUINNERGRIDWIDTH
+      ) == Math.floor(cell.column / SUDOKUINNERGRIDWIDTH)
     ) {
       isNotInSameRegion = false;
       break;
@@ -236,4 +242,25 @@ function create2DArray() {
   }
 
   return outerArray;
+}
+
+function solveBoard(board) {
+  boardInStringFormat = convertBoardToStringFormat(board);
+}
+
+function convertBoardToStringFormat(board) {
+  var stringToReturn = "";
+  for (let i = 0; i < SUDOKUBOARDWIDTH; i++) {
+    for (let j = 0; j < SUDOKUBOARDWIDTH; j++) {
+      if (board[i][j] == null) {
+        stringToReturn += ".";
+      } else {
+        stringToReturn += `${board[i][j]}`;
+      }
+
+      var isLastCell = i == SUDOKUBOARDWIDTH - 1 && j == SUDOKUBOARDWIDTH - 1;
+      if (!isLastCell) {
+      }
+    }
+  }
 }
